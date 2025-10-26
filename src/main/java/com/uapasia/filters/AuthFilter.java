@@ -8,6 +8,7 @@ import java.io.IOException;
 
 @WebFilter(urlPatterns = {"/do.newprofessors", "/do.ratings", "/do.profile", "/do.logout"})
 public class AuthFilter implements Filter {
+
     @Override
     public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain fc) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) rq;

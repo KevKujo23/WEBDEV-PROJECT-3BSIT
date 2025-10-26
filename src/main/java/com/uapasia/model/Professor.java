@@ -1,12 +1,11 @@
 package com.uapasia.model;
 
 public class Professor {
+
     private int id;
     private String name, dept, submittedBy;
 
-    public Professor(
-
-    ) {
+    public Professor() {
 
     }
 
@@ -32,9 +31,11 @@ public class Professor {
     public String getSubmittedBy() {
         return submittedBy;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public void setName(String name) {
         this.name = name;
     }

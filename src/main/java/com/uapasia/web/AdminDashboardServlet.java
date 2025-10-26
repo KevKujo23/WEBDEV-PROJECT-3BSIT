@@ -12,13 +12,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-@WebServlet(name="AdminDashboardServlet", urlPatterns={"/admin"})
+@WebServlet(name = "AdminDashboardServlet", urlPatterns = {"/admin"})
 public class AdminDashboardServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String ctx = req.getContextPath();
         List<Professor> profs = ContextStore.professors(getServletContext());
-        List<Rating> ratings  = ContextStore.ratings(getServletContext());
+        List<Rating> ratings = ContextStore.ratings(getServletContext());
 
         resp.setContentType("text/html;charset=UTF-8");
         PrintWriter out = resp.getWriter();
@@ -42,10 +43,10 @@ public class AdminDashboardServlet extends HttpServlet {
                 + "<tr><th>ID</th><th>Name</th><th>Dept</th><th>Submitted By</th><th>Actions</th></tr>"
                 + "</thead><tbody>");
         for (Professor p : profs) {
-            String id   = String.valueOf(p.getId());
+            String id = String.valueOf(p.getId());
             String name = esc(p.getName());
             String dept = esc(p.getDept());
-            String by   = esc(nullToEmpty(p.getSubmittedBy()));
+            String by = esc(nullToEmpty(p.getSubmittedBy()));
             out.println("<tr>"
                     + "<td>" + id + "</td>"
                     + "<td>" + name + "</td>"
@@ -69,9 +70,9 @@ public class AdminDashboardServlet extends HttpServlet {
                 + "<th>Created</th><th>Actions</th></tr>"
                 + "</thead><tbody>");
         for (Rating r : ratings) {
-            String id   = String.valueOf(r.getId());
-            String cmt  = esc(nullToEmpty(r.getComment()));
-            String by   = esc(nullToEmpty(r.getByUser()));
+            String id = String.valueOf(r.getId());
+            String cmt = esc(nullToEmpty(r.getComment()));
+            String by = esc(nullToEmpty(r.getByUser()));
             String when = formatTs(r.getCreatedAt());
             out.println("<tr>"
                     + "<td>" + id + "</td>"
@@ -95,13 +96,22 @@ public class AdminDashboardServlet extends HttpServlet {
     }
 
     private static String esc(String s) {
-        if (s == null) return "";
-        return s.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;")
-                .replace("\"","&quot;").replace("'","&#39;");
+        if (s == null) {
+            return "";
+        }
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                .replace("\"", "&quot;").replace("'", "&#39;");
     }
-    private static String nullToEmpty(String s){ return s==null? "" : s; }
-    private static String formatTs(long ms){
-        try { return new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(ms)); }
-        catch(Exception e){ return String.valueOf(ms); }
+
+    private static String nullToEmpty(String s) {
+        return s == null ? "" : s;
+    }
+
+    private static String formatTs(long ms) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(ms));
+        } catch (Exception e) {
+            return String.valueOf(ms);
+        }
     }
 }

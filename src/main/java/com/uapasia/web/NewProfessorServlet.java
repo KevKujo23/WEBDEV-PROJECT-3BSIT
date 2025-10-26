@@ -8,8 +8,9 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name="NewProfessorServlet", urlPatterns={"/do.newprofessors"})
+@WebServlet(name = "NewProfessorServlet", urlPatterns = {"/do.newprofessors"})
 public class NewProfessorServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String ctx = req.getContextPath();
@@ -17,18 +18,18 @@ public class NewProfessorServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
         out.println("<!doctype html><html><head><meta charset='utf-8'><title>Add Professor</title>"
-                + "<link rel='stylesheet' href='"+ctx+"/css/styles.css'></head><body>");
+                + "<link rel='stylesheet' href='" + ctx + "/css/styles.css'></head><body>");
 
         out.println("<nav class='top-nav'>"
-                + "<a href='"+ctx+"/'>Home</a>"
-                + "<a href='"+ctx+"/admin'>Admin</a>"
-                + "<form style='display:inline' action='"+ctx+"/do.logout' method='post'>"
+                + "<a href='" + ctx + "/'>Home</a>"
+                + "<a href='" + ctx + "/admin'>Admin</a>"
+                + "<form style='display:inline' action='" + ctx + "/do.logout' method='post'>"
                 + "<button type='submit'>Logout</button></form>"
                 + "</nav>");
 
         out.println("<div class='panel-container'>");
         out.println("<h2>Add Professor</h2>");
-        out.println("<form method='post' action='"+ctx+"/do.newprofessors' autocomplete='off'>");
+        out.println("<form method='post' action='" + ctx + "/do.newprofessors' autocomplete='off'>");
         out.println("<div class='form-group'><label>Professor Name"
                 + "<input type='text' name='name' required></label></div>");
         out.println("<div class='form-group'><label>Department"
@@ -61,5 +62,7 @@ public class NewProfessorServlet extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + "/admin?status=added");
     }
 
-    private static String trim(String s){ return s==null? null : s.trim(); }
+    private static String trim(String s) {
+        return s == null ? null : s.trim();
+    }
 }

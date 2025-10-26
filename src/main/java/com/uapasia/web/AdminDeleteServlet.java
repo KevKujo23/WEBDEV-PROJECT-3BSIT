@@ -6,12 +6,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet(name="AdminDeleteServlet", urlPatterns={"/do.admin.delete"})
+@WebServlet(name = "AdminDeleteServlet", urlPatterns = {"/do.admin.delete"})
 public class AdminDeleteServlet extends HttpServlet {
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String type = req.getParameter("type");
-        String id   = req.getParameter("id");
+        String id = req.getParameter("id");
 
         if ("professor".equals(type)) {
             ContextStore.deleteProfessor(getServletContext(), id);

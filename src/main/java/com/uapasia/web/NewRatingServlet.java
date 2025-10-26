@@ -8,7 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet(name="NewRatingServlet", urlPatterns={"/do.ratings"})
+@WebServlet(name = "NewRatingServlet", urlPatterns = {"/do.ratings"})
 public class NewRatingServlet extends HttpServlet {
 
     @Override
@@ -16,25 +16,25 @@ public class NewRatingServlet extends HttpServlet {
         HttpSession s = request.getSession(false);
         User user = (s == null) ? null : (User) s.getAttribute("user");
         if (user == null) {
-            response.sendRedirect(request.getContextPath()+"/login.jsp?status=unauthorized");
+            response.sendRedirect(request.getContextPath() + "/login.jsp?status=unauthorized");
             return;
         }
 
         String profIdStr = request.getParameter("profId");
-        String scoreStr  = request.getParameter("score");
-        String comment   = request.getParameter("comment");
+        String scoreStr = request.getParameter("score");
+        String comment = request.getParameter("comment");
 
         int profId = parseInt(profIdStr);
-        int score  = parseInt(scoreStr);
+        int score = parseInt(scoreStr);
 
         if (profId <= 0 || score < 1 || score > 5) {
-            response.sendRedirect(request.getContextPath()+"/do.professors");
+            response.sendRedirect(request.getContextPath() + "/do.professors");
             return;
         }
 
         var prof = ContextStore.findProfessorById(getServletContext(), profId);
         if (prof == null) {
-            response.sendRedirect(request.getContextPath()+"/do.professors");
+            response.sendRedirect(request.getContextPath() + "/do.professors");
             return;
         }
 
@@ -43,16 +43,23 @@ public class NewRatingServlet extends HttpServlet {
 
         // optional nicety cookie
         try {
-            response.addCookie(CookieUtils.make("last_prof", prof.getName(), 30*24*60*60));
-        } catch (Throwable ignored) { /* if CookieUtils not present, ignore */ }
+            response.addCookie(CookieUtils.make("last_prof", prof.getName(), 30 * 24 * 60 * 60));
+        } catch (Throwable ignored) {
+            /* if CookieUtils not present, ignore */ }
 
-        response.sendRedirect(request.getContextPath()+"/do.professor.view?id="+profId);
+        response.sendRedirect(request.getContextPath() + "/do.professor.view?id=" + profId);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.sendRedirect(req.getContextPath()+"/do.professors");
+        resp.sendRedirect(req.getContextPath() + "/do.professors");
     }
 
-    private static int parseInt(String s){ try { return Integer.parseInt(s); } catch(Exception e){ return 0; } }
+    private static int parseInt(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 }

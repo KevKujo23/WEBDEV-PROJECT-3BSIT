@@ -8,6 +8,7 @@ import java.io.IOException;
 
 @WebFilter("/*")
 public class NavContextFilter implements Filter {
+
     @Override
     public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain fc)
             throws IOException, ServletException {
@@ -21,13 +22,13 @@ public class NavContextFilter implements Filter {
 
         // optional: active tab (based on request path)
         String p = req.getRequestURI();
-        String active =
-                p.contains("/do.professors") ? "professors" :
-                        p.contains("/do.newprofessors") ? "newprof" :
-                                p.contains("/do.profile") ? "profile" :
-                                        p.endsWith("/") || p.endsWith("/index.jsp") ? "home" :
-                                                p.contains("login") ? "login" :
-                                                        p.contains("register") ? "register" : "";
+        String active
+                = p.contains("/do.professors") ? "professors"
+                : p.contains("/do.newprofessors") ? "newprof"
+                : p.contains("/do.profile") ? "profile"
+                : p.endsWith("/") || p.endsWith("/index.jsp") ? "home"
+                : p.contains("login") ? "login"
+                : p.contains("register") ? "register" : "";
         req.setAttribute("active", active);
 
         fc.doFilter(rq, rs);

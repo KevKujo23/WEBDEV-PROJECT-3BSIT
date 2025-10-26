@@ -1,6 +1,7 @@
 package com.uapasia.model;
 
 public class Rating {
+
     private int id;
     private int profId;
     private int score;
@@ -44,21 +45,27 @@ public class Rating {
     public long getCreatedAt() {
         return createdAt;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public void setProfId(int profId) {
         this.profId = profId;
     }
+
     public void setScore(int score) {
         this.score = score;
     }
+
     public void setComment(String comment) {
         this.comment = comment;
     }
+
     public void setByUser(String byUser) {
         this.byUser = byUser;
     }
+
     public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
     }

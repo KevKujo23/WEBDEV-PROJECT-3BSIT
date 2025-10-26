@@ -14,13 +14,21 @@ public class RegisterServlet extends HttpServlet {
 
     private static final Set<String> DEPTS = Set.of("SSE", "SMN", "SLG", "SCM", "SEC");
 
-    private static String trimOrNull(String s) { return (s == null) ? null : s.trim(); }
+    private static String trimOrNull(String s) {
+        return (s == null) ? null : s.trim();
+    }
+
     private static boolean emailOk(String e) {
-        if (e == null) return false;
+        if (e == null) {
+            return false;
+        }
         String x = e.trim().toLowerCase();
         return x.endsWith("@uap.asia") && x.contains("@") && x.indexOf('@') > 0 && x.length() > "@uap.asia".length();
     }
-    private static boolean nonBlank(String s) { return s != null && !s.trim().isEmpty(); }
+
+    private static boolean nonBlank(String s) {
+        return s != null && !s.trim().isEmpty();
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -35,12 +43,12 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String username   = trimOrNull(req.getParameter("username"));
-        String password   = trimOrNull(req.getParameter("password"));
-        String confirm    = trimOrNull(req.getParameter("confirm"));
-        String firstName  = trimOrNull(req.getParameter("firstName"));
-        String lastName   = trimOrNull(req.getParameter("lastName"));
-        String email      = trimOrNull(req.getParameter("email"));
+        String username = trimOrNull(req.getParameter("username"));
+        String password = trimOrNull(req.getParameter("password"));
+        String confirm = trimOrNull(req.getParameter("confirm"));
+        String firstName = trimOrNull(req.getParameter("firstName"));
+        String lastName = trimOrNull(req.getParameter("lastName"));
+        String email = trimOrNull(req.getParameter("email"));
         String department = trimOrNull(req.getParameter("department"));
 
         boolean ok = nonBlank(username)
@@ -65,7 +73,10 @@ public class RegisterServlet extends HttpServlet {
             }
         }
 
-        if (ok) resp.sendRedirect(req.getContextPath() + "/login.jsp?status=registered");
-        else    resp.sendRedirect(req.getContextPath() + "/register.jsp?status=invalid");
+        if (ok) {
+            resp.sendRedirect(req.getContextPath() + "/login.jsp?status=registered");
+        } else {
+            resp.sendRedirect(req.getContextPath() + "/register.jsp?status=invalid");
+        }
     }
 }

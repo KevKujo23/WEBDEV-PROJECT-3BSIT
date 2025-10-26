@@ -1,6 +1,10 @@
-/* ===== Base ===== */
-* { box-sizing: border-box; }
-html, body { height: 100%; }
+
+* {
+    box-sizing: border-box;
+}
+html, body {
+    height: 100%;
+}
 body {
     font-family: Arial, sans-serif;
     background: #f2f2f2;
@@ -8,9 +12,9 @@ body {
     color: #222;
 }
 
-/* ===== Top Nav ===== */
+
 .top-nav{
-    position: fixed;           /* stays put */
+    position: fixed;
     top: 18px;
     left: 50%;
     transform: translateX(-50%);
@@ -21,7 +25,7 @@ body {
     display: flex;
     gap: 12px;
     align-items: center;
-    z-index: 1000;             /* ensure above everything */
+    z-index: 1000;
 }
 .top-nav a{
     text-decoration: none;
@@ -29,15 +33,23 @@ body {
     font-weight: 600;
 }
 .top-nav a:hover,
-.top-nav a.active { text-decoration: underline; }
-.greet{ font-weight: 700; margin-right: 8px; color: #333; }
+.top-nav a.active {
+    text-decoration: underline;
+}
+.greet{
+    font-weight: 700;
+    margin-right: 8px;
+    color: #333;
+}
 
-/* Push page content below the fixed nav */
+
 body.home,
 body.panel,
-body { padding-top: 84px; }  /* adjust if nav height changes */
+body {
+    padding-top: 84px;
+}
 
-/* ===== Panels / Forms ===== */
+
 .login-container,
 .register-container,
 .panel-container{
@@ -47,7 +59,7 @@ body { padding-top: 84px; }  /* adjust if nav height changes */
     box-shadow: 0 0 15px rgba(0,0,0,.1);
     width: 720px;
     max-width: 92vw;
-    margin: 0 auto;            /* center horizontally */
+    margin: 0 auto;
     margin-bottom: 32px;
 }
 
@@ -57,7 +69,9 @@ h2{
     color: #333;
 }
 
-.form-group{ margin-bottom: 15px; }
+.form-group{
+    margin-bottom: 15px;
+}
 
 label{
     display: block;
@@ -78,7 +92,9 @@ textarea{
     background: #fff;
 }
 
-textarea{ min-height: 90px; }
+textarea{
+    min-height: 90px;
+}
 
 button{
     width: 100%;
@@ -90,19 +106,28 @@ button{
     font-size: 16px;
     cursor: pointer;
 }
-button:hover{ background: #45a049; }
+button:hover{
+    background: #45a049;
+}
 
 .register-link{
     text-align: center;
     margin-top: 10px;
     font-size: 14px;
 }
-.register-link a{ color: #4CAF50; text-decoration: none; }
-.register-link a:hover{ text-decoration: underline; }
+.register-link a{
+    color: #4CAF50;
+    text-decoration: none;
+}
+.register-link a:hover{
+    text-decoration: underline;
+}
 
-.role-group{ margin-bottom: 20px; }
+.role-group{
+    margin-bottom: 20px;
+}
 
-/* ===== Tables (Professors list, etc.) ===== */
+
 table{
     width: 100%;
     border-collapse: collapse;
@@ -113,12 +138,20 @@ th, td{
     padding: 10px 12px;
     text-align: left;
 }
-th{ background: #f7f7f7; }
+th{
+    background: #f7f7f7;
+}
 
-.note{ color: #666; font-size: 0.92rem; margin-top: 10px; }
+.note{
+    color: #666;
+    font-size: 0.92rem;
+    margin-top: 10px;
+}
 
-/* ===== Feed / Posts (if used) ===== */
-.feed{ margin-top: 14px; }
+
+.feed{
+    margin-top: 14px;
+}
 .post{
     background: #fff;
     border: 1px solid #eee;
@@ -126,17 +159,33 @@ th{ background: #f7f7f7; }
     padding: 12px;
     margin: 8px 0;
 }
-.post .meta{ font-size: .85rem; color: #777; margin-bottom: 6px; }
-.score-badge{ display: inline-block; padding: 2px 8px; border-radius: 999px; background: #eee; }
+.post .meta{
+    font-size: .85rem;
+    color: #777;
+    margin-bottom: 6px;
+}
+.score-badge{
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #eee;
+}
 
-/* ===== Footer ===== */
+
 .site-footer{
     text-align: center;
     color: #777;
     margin: 32px auto 24px;
 }
 
-/* ===== Small screens ===== */
+.notice{
+    margin:1rem 0;
+    padding:.75rem;
+    border:1px solid #ccc;
+    border-radius:.5rem;
+    display:none
+}
+
 @media (max-width: 520px){
     .top-nav{
         gap: 8px;

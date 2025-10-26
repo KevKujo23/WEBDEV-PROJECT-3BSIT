@@ -5,7 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 public final class Ui {
-    private Ui() {}
+
+    private Ui() {
+    }
 
     public static String header(HttpServletRequest req, String active) {
         String ctx = req.getContextPath();
@@ -43,13 +45,17 @@ public final class Ui {
     private static String link(String ctx, String path, String label, boolean active) {
         return "<a" + (active ? " class='active'" : "") + " href='" + ctx + path + "'>" + esc(label) + "</a>";
     }
+
     private static String link(String ctx, String path, String label, String activeKey) {
         // overload if you ever want to compute elsewhere
         return link(ctx, path, label, false);
     }
+
     private static String esc(String s) {
-        if (s == null) return "";
-        return s.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;")
-                .replace("\"","&quot;").replace("'","&#39;");
+        if (s == null) {
+            return "";
+        }
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                .replace("\"", "&quot;").replace("'", "&#39;");
     }
 }

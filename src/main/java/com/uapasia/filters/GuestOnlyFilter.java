@@ -8,6 +8,7 @@ import java.io.IOException;
 
 @WebFilter(urlPatterns = {"/login.jsp", "/register.jsp", "/do.login", "/do.register"})
 public class GuestOnlyFilter implements Filter {
+
     @Override
     public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain fc) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) rq;
