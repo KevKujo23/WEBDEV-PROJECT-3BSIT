@@ -1,0 +1,62 @@
+/* Admin dashboard UI */
+
+.page-title{font-size:1.6rem;font-weight:700;margin:0 0 1rem}
+.tabs{display:flex;gap:.5rem;margin:1rem 0}
+.tab{padding:.5rem 1rem;border:1px solid #e1e1e1;border-radius:.75rem;background:#f7f7f7;cursor:pointer}
+.tab.active{background:#fff;border-color:#d0d0d0;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:.75rem;margin:.75rem 0 1rem}
+.toolbar .left,.toolbar .right{display:flex;gap:.5rem;align-items:center}
+.card{background:#fff;border:1px solid #eaeaea;border-radius:1rem;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.table{width:100%;border-collapse:separate;border-spacing:0 .5rem}
+.table th{font-weight:600;text-align:left;padding:.5rem .75rem;color:#555}
+.table td{background:#fafafa;padding:.6rem .75rem;border-top:1px solid #eee;border-bottom:1px solid #eee}
+.table tr td:first-child{border-left:1px solid #eee;border-top-left-radius:.5rem;border-bottom-left-radius:.5rem}
+.table tr td:last-child{border-right:1px solid #eee;border-top-right-radius:.5rem;border-bottom-right-radius:.5rem}
+.col-actions{width:180px}
+.actions{display:flex;gap:.35rem}
+
+.badge{display:inline-block;padding:.2rem .5rem;border-radius:999px;background:#eef4ff;color:#2952cc;font-size:.75rem}
+.star{font-weight:700}
+.truncate{max-width:360px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{padding:1rem;color:#777}
+
+.input{padding:.55rem .7rem;border:1px solid #ddd;border-radius:.6rem}
+.input.sm{width:110px}
+.select{padding:.5rem .7rem;border:1px solid #ddd;border-radius:.6rem;background:#fff}
+
+.btn{padding:.45rem .75rem;border:1px solid #dcdcdc;border-radius:.6rem;background:#fff;cursor:pointer}
+.btn.primary{background:#2f7cf6;border-color:#2f7cf6;color:#fff}
+.btn.ghost{background:#fff}
+.btn.danger{background:#f44336;border-color:#f44336;color:#fff}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.inline{display:inline}
+
+.toast{position:fixed;top:1.2rem;right:1.2rem;background:#111;color:#fff;padding:.6rem .9rem;border-radius:.6rem;box-shadow:0 6px 20px rgba(0,0,0,.2);z-index:60;opacity:.95;transition:transform .25s ease, opacity .25s ease}
+.toast.hide{opacity:0;transform:translateY(-8px)}
+
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:90}
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100}
+.modal.hidden,.modal-backdrop.hidden{display:none}
+.modal-card{width:min(520px,92vw);background:#fff;border-radius:.9rem;border:1px solid #eaeaea;box-shadow:0 12px 32px rgba(0,0,0,.18)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1rem;border-bottom:1px solid #eee}
+.modal-body{padding:1rem}
+.modal-footer{padding:1rem;display:flex;justify-content:flex-end;gap:.5rem;border-top:1px solid #eee}
+.field{display:flex;flex-direction:column;gap:.35rem;margin-bottom:.8rem}
+.icon-close{background:transparent;border:none;font-size:1.3rem;cursor:pointer}
+
+/* Color/hover tweaks scoped to admin page */
+.tab {color: #222; background: #f2f2f2;}
+.tab.active {color: #000; background: #fff;}
+.btn.primary {background: #2f7cf6; border-color: #2f7cf6; color: #fff;}
+.btn.primary:hover {background: #1e5edb;}
+.btn, .tab {font-weight: 500;}
+
+/* Neutral ghost button (Cancel) */
+.btn.ghost { background:#fff; border:1px solid #dcdcdc; color:#222; }
+.admin .btn.ghost:hover { background:#f5f5f5 !important; color:#222 !important; }
+
+/* Ensure only primary buttons get colored hover */
+.admin .btn.primary:hover { background:#1e5edb; }
