@@ -92,7 +92,6 @@ public class ProfessorViewServlet extends HttpServlet {
         out.println("<div class='panel-container'>");
         out.println("<h2>" + esc(prof.getFullName()) +
                 " <span class='score-badge'>Avg: " + avgTxt + "</span></h2>");
-        out.println("<p class='note'>Department ID: " + prof.getDeptId() + "</p>");
 
         /* ---------- Add Rating Form ---------- */
         out.println("<h3 style='margin-top:20px'>Add Rating</h3>");
@@ -119,7 +118,7 @@ public class ProfessorViewServlet extends HttpServlet {
                 + "<select name='term' required>"
                 + "<option value='1'>1st</option><option value='2'>2nd</option><option value='Summer'>Summer</option>"
                 + "</select></label></div>");
-        out.println("<div class='form-group'><label>Score (1–5)"
+        out.println("<div class='form-group'><label>Score (1–5) &nbsp"
                 + "<input type='number' name='score' min='1' max='5' required></label></div>");
         out.println("<div class='form-group'><label>Comment (optional)"
                 + "<textarea name='comment' placeholder='Share your thoughts...'></textarea></label></div>");

@@ -4,11 +4,16 @@ import com.uapasia.dao.RememberTokenDAO;
 import com.uapasia.dao.impl.RememberTokenDAOImpl;
 import com.uapasia.model.User;
 import com.uapasia.util.CookieUtils;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
+import javax.servlet.annotation.WebFilter;
 
+/**
+ *
+ * @author Kevin
+ */
+@WebFilter("/*")
 public class RememberMeFilter implements Filter {
 
     @Override

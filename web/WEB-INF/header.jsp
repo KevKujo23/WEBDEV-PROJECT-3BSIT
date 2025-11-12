@@ -5,8 +5,8 @@
 <c:set var="isAdmin" value="${loggedIn and user.role == 'ADMIN'}" />
 
 <nav class="top-nav">
-
-  <a href="${pageContext.request.contextPath}/do.professors">Browse</a>
+  <!-- Browse (public) -->
+  <a href="<c:url value='/professors'/>">Browse</a>
 
   <!-- Student -->
   <c:if test="${loggedIn and not isAdmin}">

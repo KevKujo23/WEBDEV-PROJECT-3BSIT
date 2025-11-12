@@ -52,7 +52,7 @@
 .tab.active {color: #000; background: #fff;}
 .btn.primary {background: #2f7cf6; border-color: #2f7cf6; color: #fff;}
 .btn.primary:hover {background: #1e5edb;}
-.btn, .tab {font-weight: 500;}
+.btn, .tab {font-weight: 500;}  
 
 /* Neutral ghost button (Cancel) */
 .btn.ghost { background:#fff; border:1px solid #dcdcdc; color:#222; }
@@ -60,3 +60,105 @@
 
 /* Ensure only primary buttons get colored hover */
 .admin .btn.primary:hover { background:#1e5edb; }
+
+/* --- Force light-looking form controls on admin pages --- */
+.admin, .admin * {
+  color-scheme: light;            /* defeats auto-dark UI for inputs/selects */
+}
+
+.admin select,
+.admin .select,
+.admin input,
+.admin .input,
+.admin textarea {
+  background:#fff !important;
+  color:#111 !important;
+  border:1px solid #ddd;
+  border-radius:.6rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Make dropdown items readable, too */
+.admin select option {
+  background:#fff;
+  color:#111;
+}
+
+/* Optional: tweak placeholder color a bit */
+.admin ::placeholder { color:#888; }
+
+/* --- Keep the modal close button neatly aligned to the right --- */
+.modal-header { display:flex; align-items:center; gap:.5rem; }
+.icon-close {
+  margin-left:auto;               /* push "×" to the right */
+  line-height:1;
+  padding:.25rem;
+}
+
+/* ===== Admin Cards & Summary ===== */
+.summary.grid-3 {
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:.75rem;
+  margin:.75rem 0 1rem;
+}
+.tile {
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:1rem;
+  padding:1rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+.kpi { font-size:1.6rem; font-weight:700; }
+.label { color:#666; }
+
+/* Card grid for professors */
+.grid-cards {
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:.75rem;
+}
+@media (max-width: 980px){ .grid-cards { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+@media (max-width: 640px){ .grid-cards { grid-template-columns:1fr; } }
+
+/* Professor card */
+.prof-card header {
+  display:flex; justify-content:space-between; align-items:flex-start; gap:.75rem;
+}
+.prof-card .name { font-weight:700; }
+.prof-card .sub { font-size:.9rem; color:#666; }
+.prof-card .meta { color:#555; font-weight:600; white-space:nowrap; }
+.prof-card .body { margin:.5rem 0; }
+.prof-card .chips { display:flex; flex-wrap:wrap; gap:.3rem; margin:.25rem 0 .25rem; }
+.prof-card .chip {
+  background:#f1f4fb; border:1px solid #dfe7fb; padding:.15rem .5rem; border-radius:999px; font-size:.85rem;
+}
+.prof-card .actions { display:flex; gap:.5rem; justify-content:flex-end; }
+
+/* Small skeleton/empty styles */
+.skel {
+  background: linear-gradient(90deg, #f3f3f3 25%, #e9e9e9 37%, #f3f3f3 63%);
+  animation: shimmer 1.2s infinite;
+  background-size: 400% 100%;
+}
+@keyframes shimmer { 0% {background-position: 100% 0} 100% {background-position: 0 0} }
+
+.btn.danger.soft { background:#f7e7e7; border-color:#f0d0d0; color:#a22222; }
+
+/* ===== Ratings Feed (Admin) ===== */
+.rating-toolbar { margin-bottom:.75rem; }
+.rating-feed { display:grid; gap:.75rem; }
+.rating-card header {
+  display:flex; justify-content:space-between; align-items:flex-start; gap:.75rem;
+}
+.rating-card .who { font-weight:700; }
+.rating-card .meta { color:#555; white-space:nowrap; }
+.rating-card .submeta { color:#777; font-size:.9rem; }
+.rating-card .text { margin:.4rem 0 .6rem; line-height:1.45; white-space:pre-wrap; }
+.pills { display:flex; gap:.35rem; flex-wrap:wrap; }
+.pill { background:#f1f4fb; border:1px solid #dfe7fb; padding:.1rem .5rem; border-radius:999px; font-size:.8rem; }
+.pill.score { font-weight:700; }
+.rating-card footer.actions { display:flex; gap:.5rem; justify-content:flex-end; }
+

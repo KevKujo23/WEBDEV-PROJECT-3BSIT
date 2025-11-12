@@ -6,7 +6,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-
+@WebFilter({"/login.jsp", "/register.jsp"})
 public class GuestOnlyFilter implements Filter {
     @Override
     public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain fc) throws IOException, ServletException {

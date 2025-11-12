@@ -8,7 +8,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-
+@WebFilter({"/admin", "/do.admin.*"})
 public class AdminOnlyFilter implements Filter {
 
     @Override

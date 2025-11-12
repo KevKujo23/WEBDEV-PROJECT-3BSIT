@@ -6,22 +6,28 @@ import com.uapasia.factory.DAOFactory;
 import com.uapasia.model.*;
 import com.uapasia.util.CookieUtils;
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import javax.servlet.annotation.WebServlet;
+import java.net.URLEncoder;
 
 @WebServlet(name = "NewRatingServlet", urlPatterns = {"/do.ratings"})
 public class NewRatingServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         final String ctx = request.getContextPath(); // e.g., "/ProjectWebDev"
 
-        // Require login and non-admin
+        // Require login and non-admin (students only)
         HttpSession session = request.getSession(false);
         User user = (session == null) ? null : (User) session.getAttribute("user");
         if (user == null) {
-            response.sendRedirect(ctx + "/login.jsp?status=unauthorized");
+            // Preserve where they came from
+            String next = "/do.professor.view?id=" + safe(request.getParameter("profId"));
+            response.sendRedirect(ctx + "/login.jsp?status=unauthorized&next=" + URLEncoder.encode(next, "UTF-8"));
             return;
         }
         if (user.getRole() == Role.ADMIN) {
@@ -29,6 +35,7 @@ public class NewRatingServlet extends HttpServlet {
             return;
         }
 
+        // Gather + validate inputs
         int profId     = parseInt(pick(request.getParameter("profId"), request.getParameter("professorId")), 0);
         int subjectId  = parseInt(request.getParameter("subjectId"), 0);
         String ay      = trim(request.getParameter("academicYear"));
@@ -36,8 +43,8 @@ public class NewRatingServlet extends HttpServlet {
         int score      = parseInt(request.getParameter("score"), 0);
         String comment = trim(request.getParameter("comment"));
 
+        // Ensure valid professor
         ProfessorDAO profDAO = DAOFactory.professors();
-
         try {
             Professor prof = profDAO.findById(profId);
             if (prof == null) {
@@ -45,7 +52,7 @@ public class NewRatingServlet extends HttpServlet {
                 return;
             }
 
-            // Validation
+            // Field validations
             if (score < 1 || score > 5) {
                 response.sendRedirect(ctx + "/do.professor.view?id=" + profId + "&status=badscore");
                 return;
@@ -61,12 +68,13 @@ public class NewRatingServlet extends HttpServlet {
 
             RatingDAO ratingDAO = DAOFactory.ratings();
 
+            // Prevent duplicate rating for same (user, prof, subject, AY, term)
             if (ratingDAO.exists(user.getUserId(), profId, subjectId, ay, term)) {
                 response.sendRedirect(ctx + "/do.professor.view?id=" + profId + "&status=already");
                 return;
             }
 
-            // Build and insert rating
+            // Build rating
             Rating r = new Rating();
             r.setUserId(user.getUserId());
             r.setProfId(profId);
@@ -76,20 +84,21 @@ public class NewRatingServlet extends HttpServlet {
             r.setScore(score);
             r.setComment(comment);
 
+            // Insert
             int id = ratingDAO.insert(r);
             if (id <= 0) {
                 response.sendRedirect(ctx + "/do.professor.view?id=" + profId + "&status=error");
                 return;
             }
 
-            // Optional nicety cookie: store last professor viewed (30 days)
+            // Optional convenience cookie: last viewed professor (30 days)
             try {
                 Cookie ck = CookieUtils.make(
                         "last_prof",
-                        prof.getFullName(),
-                        30 * 24 * 60 * 60, // 30 days
+                        prof.getFullName(),             // ensure Professor#getFullName() exists
+                        30 * 24 * 60 * 60,              // 30 days
                         ctx,
-                        false // set to true for HTTPS
+                        false                           // set true if site is HTTPS only
                 );
                 response.addCookie(ck);
             } catch (Throwable ignored) { }
@@ -105,23 +114,21 @@ public class NewRatingServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         final String ctx = req.getContextPath();
+        // Ratings should be POSTed; redirect GETs to listing
         resp.sendRedirect(ctx + "/do.professors");
     }
 
     /* ---------- helper methods ---------- */
+
     private static String pick(String... vals) {
         if (vals == null) return null;
         for (String v : vals) if (v != null && !v.trim().isEmpty()) return v.trim();
         return null;
-    }
+       }
 
-    private static String trim(String s) {
-        return s == null ? null : s.trim();
-    }
+    private static String trim(String s) { return s == null ? null : s.trim(); }
 
-    private static boolean isBlank(String s) {
-        return s == null || s.trim().isEmpty();
-    }
+    private static boolean isBlank(String s) { return s == null || s.trim().isEmpty(); }
 
     private static int parseInt(String s, int def) {
         try { return Integer.parseInt(s); } catch (Exception e) { return def; }
@@ -140,4 +147,6 @@ public class NewRatingServlet extends HttpServlet {
         if ("Summer".equalsIgnoreCase(v)) return Term.SUMMER;
         return null;
     }
+
+    private static String safe(String v) { return v == null ? "" : v.trim(); }
 }

@@ -53,10 +53,12 @@ DROP TABLE IF EXISTS `departments`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `departments` (
   `dept_id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dept_code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dept_name` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`dept_id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `name` (`dept_name`),
+  UNIQUE KEY `uq_dept_code` (`dept_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,8 +67,35 @@ CREATE TABLE `departments` (
 
 LOCK TABLES `departments` WRITE;
 /*!40000 ALTER TABLE `departments` DISABLE KEYS */;
-INSERT INTO `departments` VALUES (4,'Business'),(1,'Computer Science'),(3,'Engineering'),(2,'Mathematics');
+INSERT INTO `departments` VALUES (1,'SSE','School of Science and Engineering'),(2,'CAS','College of Arts and Sciences'),(3,'SMN','School of Management'),(4,'SEC','School of Economics'),(5,'SED','School of Education'),(6,'SCM','School of Communication and Media'),(7,'SPG','School of Philosophy and Governance');
 /*!40000 ALTER TABLE `departments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `professor_subjects`
+--
+
+DROP TABLE IF EXISTS `professor_subjects`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `professor_subjects` (
+  `prof_id` int NOT NULL,
+  `subject_id` int NOT NULL,
+  PRIMARY KEY (`prof_id`,`subject_id`),
+  KEY `fk_ps_subj` (`subject_id`),
+  KEY `idx_professor_subjects` (`prof_id`,`subject_id`),
+  CONSTRAINT `fk_ps_prof` FOREIGN KEY (`prof_id`) REFERENCES `professors` (`prof_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_ps_subj` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`subject_id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `professor_subjects`
+--
+
+LOCK TABLES `professor_subjects` WRITE;
+/*!40000 ALTER TABLE `professor_subjects` DISABLE KEYS */;
+/*!40000 ALTER TABLE `professor_subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -83,9 +112,10 @@ CREATE TABLE `professors` (
   `dept_id` int NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`prof_id`),
-  KEY `fk_prof_dept` (`dept_id`),
+  KEY `idx_prof_last_first` (`last_name`,`first_name`),
+  KEY `idx_prof_dept` (`dept_id`),
   CONSTRAINT `fk_prof_dept` FOREIGN KEY (`dept_id`) REFERENCES `departments` (`dept_id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,6 +124,7 @@ CREATE TABLE `professors` (
 
 LOCK TABLES `professors` WRITE;
 /*!40000 ALTER TABLE `professors` DISABLE KEYS */;
+INSERT INTO `professors` VALUES (1,'Giuseppe','Ng',1,'2025-11-11 20:43:05');
 /*!40000 ALTER TABLE `professors` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -117,13 +148,13 @@ CREATE TABLE `ratings` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`rating_id`),
   UNIQUE KEY `uq_rating` (`user_id`,`prof_id`,`subject_id`,`academic_year`,`term`),
-  KEY `fk_r_prof` (`prof_id`),
   KEY `fk_r_subj` (`subject_id`),
+  KEY `idx_rating_prof` (`prof_id`,`created_at`),
   CONSTRAINT `fk_r_prof` FOREIGN KEY (`prof_id`) REFERENCES `professors` (`prof_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_r_subj` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`subject_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_r_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
   CONSTRAINT `ratings_chk_1` CHECK ((`score` between 1 and 5))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -132,6 +163,7 @@ CREATE TABLE `ratings` (
 
 LOCK TABLES `ratings` WRITE;
 /*!40000 ALTER TABLE `ratings` DISABLE KEYS */;
+INSERT INTO `ratings` VALUES (1,1,2,1,'2025-2026','1',5,'good prof yeah','2025-11-11 23:05:21',NULL);
 /*!40000 ALTER TABLE `ratings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,7 +183,7 @@ CREATE TABLE `remember_tokens` (
   UNIQUE KEY `token` (`token`),
   KEY `fk_t_user` (`user_id`),
   CONSTRAINT `fk_t_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,9 +206,13 @@ CREATE TABLE `subjects` (
   `subject_id` int NOT NULL AUTO_INCREMENT,
   `code` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   `title` varchar(160) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dept_id` int NOT NULL,
   PRIMARY KEY (`subject_id`),
-  UNIQUE KEY `code` (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `code` (`code`),
+  KEY `fk_subjects_dept` (`dept_id`),
+  KEY `idx_subjects_code_title` (`code`,`title`),
+  CONSTRAINT `fk_subjects_dept` FOREIGN KEY (`dept_id`) REFERENCES `departments` (`dept_id`) ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,6 +221,7 @@ CREATE TABLE `subjects` (
 
 LOCK TABLES `subjects` WRITE;
 /*!40000 ALTER TABLE `subjects` DISABLE KEYS */;
+INSERT INTO `subjects` VALUES (1,'IT1311L','Web & Application Devt. & Emerging Technologies/L',1);
 /*!40000 ALTER TABLE `subjects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -210,7 +247,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `email` (`email`),
   KEY `fk_user_dept` (`dept_id`),
   CONSTRAINT `fk_user_dept` FOREIGN KEY (`dept_id`) REFERENCES `departments` (`dept_id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -219,7 +256,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'2025-00001','admin@uap.test','admin123','Admin Person',4,1,'ADMIN','2025-11-10 12:26:17'),(2,'2025-00002','student@uap.test','student123','Student One',2,1,'USER','2025-11-10 12:26:17');
+INSERT INTO `users` VALUES (1,'2025-00001','admin@uap.test','admin123','Admin Person',4,1,'ADMIN','2025-11-10 12:26:17'),(2,'2025-00002','student@uap.test','student123','Student One',2,1,'USER','2025-11-10 12:26:17'),(3,'232714','kevinlawrenze.lapuz@uap.asia','Left4dead2','Kevin Lawrenze Lapuz',3,1,'USER','2025-11-11 11:39:54'),(4,'231212','alexander.velo@uap.asia','12345','Alexander Velo',3,1,'USER','2025-11-11 11:57:31');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -232,4 +269,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-11 14:40:01
+-- Dump completed on 2025-11-12  8:07:02

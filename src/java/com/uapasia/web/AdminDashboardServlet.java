@@ -8,8 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @WebServlet(name = "AdminDashboardServlet", urlPatterns = {"/admin"})
 public class AdminDashboardServlet extends HttpServlet {
@@ -18,7 +17,7 @@ public class AdminDashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException, ServletException {
 
-        final String ctx = req.getContextPath(); // e.g. "/ProjectWebDev"
+        final String ctx = req.getContextPath();
 
         // Require Admin
         HttpSession session = req.getSession(false);
@@ -28,22 +27,21 @@ public class AdminDashboardServlet extends HttpServlet {
             return;
         }
 
-        ProfessorDAO profDAO = DAOFactory.professors();
+        // -------- Professors (via DAO) --------
         List<Professor> professors = new ArrayList<>();
-        List<Rating> ratings = new ArrayList<>();
-
-        // Load professors (0 = all in your DAO)
         try {
-            professors = profDAO.listByDepartment(0);
+            ProfessorDAO profDAO = DAOFactory.professors();
+            professors = profDAO.listByDepartment(0); // 0 = all professors
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Load ratings
+        // -------- Ratings --------
+        List<Rating> ratings = new ArrayList<>();
         try (java.sql.Connection c = com.uapasia.dao.util.DB.get();
              java.sql.PreparedStatement ps = c.prepareStatement(
                      "SELECT rating_id, prof_id, user_id, subject_id, academic_year, term, score, comment, created_at " +
-                             "FROM ratings ORDER BY rating_id DESC");
+                     "FROM ratings ORDER BY rating_id DESC");
              java.sql.ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
@@ -64,27 +62,100 @@ public class AdminDashboardServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        // --- Departments for selects (dept_id + name) ---
-        List<java.util.Map<String, Object>> departments = new ArrayList<>();
+        // -------- Departments (for dropdowns/badges) --------
+        List<Map<String, Object>> departments = new ArrayList<>();
         try (java.sql.Connection c = com.uapasia.dao.util.DB.get();
              java.sql.PreparedStatement ps = c.prepareStatement(
-                     "SELECT dept_id, name FROM departments ORDER BY name");
+                     "SELECT dept_id, dept_name FROM departments ORDER BY dept_name");
              java.sql.ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                java.util.Map<String, Object> m = new java.util.HashMap<>();
+                Map<String, Object> m = new HashMap<>();
                 m.put("id", rs.getInt("dept_id"));
-                m.put("name", rs.getString("name"));
+                m.put("name", rs.getString("dept_name"));
                 departments.add(m);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        // -------- Subjects (labels for professor modal) --------
+        List<Map<String, Object>> subjects = new ArrayList<>();
+        try (java.sql.Connection c = com.uapasia.dao.util.DB.get();
+             java.sql.PreparedStatement ps = c.prepareStatement(
+                     "SELECT s.subject_id, CONCAT(s.code, ' - ', s.title, ' (', d.dept_name, ')') AS label " +
+                     "FROM subjects s JOIN departments d ON s.dept_id = d.dept_id ORDER BY s.code");
+             java.sql.ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", rs.getInt("subject_id"));
+                m.put("label", rs.getString("label"));
+                subjects.add(m);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // -------- Subjects FULL (for the Subjects tab) --------
+        List<Map<String, Object>> subjectsFull = new ArrayList<>();
+        try (java.sql.Connection c = com.uapasia.dao.util.DB.get();
+             java.sql.PreparedStatement ps = c.prepareStatement(
+                     "SELECT s.subject_id, s.code, s.title, s.dept_id, d.dept_name " +
+                     "FROM subjects s JOIN departments d ON s.dept_id = d.dept_id ORDER BY s.code");
+             java.sql.ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", rs.getInt("subject_id"));
+                m.put("code", rs.getString("code"));
+                m.put("title", rs.getString("title"));
+                m.put("deptId", rs.getInt("dept_id"));
+                m.put("deptName", rs.getString("dept_name"));
+                subjectsFull.add(m);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // -------- prof_id -> CSV(subject_id) for Edit modal preselect --------
+        Map<Integer, String> profSubjectsCsv = new HashMap<>();
+        if (!professors.isEmpty()) {
+            StringBuilder sql = new StringBuilder(
+                    "SELECT prof_id, subject_id FROM professor_subjects WHERE prof_id IN (");
+            for (int i = 0; i < professors.size(); i++) {
+                if (i > 0) sql.append(',');
+                sql.append('?');
+            }
+            sql.append(')');
+
+            try (java.sql.Connection c = com.uapasia.dao.util.DB.get();
+                 java.sql.PreparedStatement ps = c.prepareStatement(sql.toString())) {
+                int idx = 1;
+                for (Professor p : professors) ps.setInt(idx++, p.getProfId());
+                try (java.sql.ResultSet rs = ps.executeQuery()) {
+                    Map<Integer, List<Integer>> tmp = new HashMap<>();
+                    while (rs.next()) {
+                        tmp.computeIfAbsent(rs.getInt("prof_id"), k -> new ArrayList<>())
+                           .add(rs.getInt("subject_id"));
+                    }
+                    for (Professor p : professors) {
+                        List<Integer> s = tmp.getOrDefault(p.getProfId(), Collections.emptyList());
+                        String csv = s.stream().map(String::valueOf)
+                                      .reduce((a, b) -> a + "," + b).orElse("");
+                        profSubjectsCsv.put(p.getProfId(), csv);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // -------- Bind & forward --------
         req.setAttribute("departments", departments);
+        req.setAttribute("subjects", subjects);           // for professor modal
+        req.setAttribute("subjectsFull", subjectsFull);   // for Subjects tab
+        req.setAttribute("profSubjectsCsv", profSubjectsCsv);
         req.setAttribute("professors", professors);
         req.setAttribute("ratings", ratings);
 
-        // Forward to JSP view
         req.getRequestDispatcher("/WEB-INF/views/admin.jsp").forward(req, resp);
     }
 }
